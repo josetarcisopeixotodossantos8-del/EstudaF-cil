@@ -1,1 +1,298 @@
 teste essa frase
+import React, { useState } from 'react';
+import { 
+  BookOpen, 
+  Calendar, 
+  Clock, 
+  CheckCircle, 
+  TrendingUp, 
+  Bell, 
+  Search, 
+  Menu, 
+  X,
+  Target,
+  FileText,
+  Award,
+  ChevronRight
+} from 'lucide-react';
+
+// --- DADOS FALSOS (MOCKS) PARA DEMONSTRAÇÃO ---
+const estatisticas = [
+  { titulo: 'Horas Estudadas', valor: '32h', subtitulo: 'esta semana', icone: Clock, cor: 'text-blue-600', bg: 'bg-blue-100' },
+  { titulo: 'Tarefas Concluídas', valor: '24', subtitulo: 'de 30 planejadas', icone: CheckCircle, cor: 'text-green-600', bg: 'bg-green-100' },
+  { titulo: 'Ofensiva (Streak)', valor: '12 dias', subtitulo: 'foco total!', icone: Award, cor: 'text-orange-600', bg: 'bg-orange-100' },
+  { titulo: 'Progresso Geral', valor: '68%', subtitulo: 'do edital', icone: TrendingUp, cor: 'text-purple-600', bg: 'bg-purple-100' },
+];
+
+const cronogramaHoje = [
+  { id: 1, horario: '08:00 - 10:00', materia: 'Matemática', topico: 'Funções de 2º Grau', tipo: 'Teoria', status: 'concluido' },
+  { id: 2, horario: '10:15 - 11:45', materia: 'Física', topico: 'Cinemática (Revisão)', tipo: 'Exercícios', status: 'em_andamento' },
+  { id: 3, horario: '14:00 - 15:30', materia: 'Redação', topico: 'Eixos Temáticos: Tecnologia', tipo: 'Prática', status: 'pendente' },
+  { id: 4, horario: '16:00 - 17:00', materia: 'História', topico: 'Revolução Industrial', tipo: 'Leitura', status: 'pendente' },
+];
+
+const progressoMaterias = [
+  { nome: 'Matemática', progresso: 75, cor: 'bg-blue-500' },
+  { nome: 'Física', progresso: 45, cor: 'bg-orange-500' },
+  { nome: 'Biologia', progresso: 90, cor: 'bg-green-500' },
+  { nome: 'Linguagens', progresso: 60, cor: 'bg-purple-500' },
+  { nome: 'Química', progresso: 30, cor: 'bg-red-500' },
+];
+
+const proximasProvas = [
+  { id: 1, nome: 'Simulado ENEM - Dia 1', data: '15 Ago, 2026', diasRestantes: 21 },
+  { id: 2, nome: 'Prova de Matemática', data: '22 Ago, 2026', diasRestantes: 28 },
+];
+
+export default function App() {
+  const [menuAberto, setMenuAberto] = useState(false);
+
+  return (
+    <div className="flex h-screen bg-gray-50 font-sans text-gray-800 overflow-hidden">
+      
+      {/* SIDEBAR (Navegação Lateral) */}
+      <aside 
+        className={`${
+          menuAberto ? 'translate-x-0' : '-translate-x-full'
+        } fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out md:relative md:translate-x-0 flex flex-col`}
+      >
+        <div className="flex items-center justify-between p-6 border-b border-gray-100">
+          <div className="flex items-center gap-2">
+            <div className="p-2 bg-indigo-600 rounded-lg">
+              <BookOpen className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-xl font-bold text-gray-900">AprovaJá</span>
+          </div>
+          <button className="md:hidden text-gray-500 hover:text-gray-700" onClick={() => setMenuAberto(false)}>
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+          <NavItem icone={Target} texto="Dashboard" ativo />
+          <NavItem icone={Calendar} texto="Meu Cronograma" />
+          <NavItem icone={FileText} texto="Material de Apoio" />
+          <NavItem icone={CheckCircle} texto="Banco de Questões" />
+          <NavItem icone={TrendingUp} texto="Desempenho" />
+        </nav>
+
+        <div className="p-4 border-t border-gray-100">
+          <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+            <img 
+              src="https://api.dicebear.com/7.x/notionists/svg?seed=Felix" 
+              alt="Avatar do Usuário" 
+              className="w-10 h-10 rounded-full bg-indigo-100"
+            />
+            <div>
+              <p className="text-sm font-semibold text-gray-900">Lucas Silva</p>
+              <p className="text-xs text-gray-500">Plano Premium</p>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      {/* OVERLAY PARA MOBILE */}
+      {menuAberto && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          onClick={() => setMenuAberto(false)}
+        />
+      )}
+
+      {/* CONTEÚDO PRINCIPAL */}
+      <main className="flex-1 flex flex-col h-screen overflow-hidden">
+        
+        {/* HEADER */}
+        <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
+          <div className="flex items-center gap-4">
+            <button 
+              className="md:hidden text-gray-500 hover:text-gray-700"
+              onClick={() => setMenuAberto(true)}
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 hidden sm:block">Bom dia, Lucas! 🚀</h1>
+              <p className="text-sm text-gray-500 hidden sm:block">Sábado, 25 de Julho de 2026</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="relative hidden md:block">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input 
+                type="text" 
+                placeholder="Buscar matérias..." 
+                className="pl-9 pr-4 py-2 bg-gray-100 border-transparent rounded-full text-sm focus:bg-white focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none w-64 transition-all"
+              />
+            </div>
+            <button className="relative p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors">
+              <Bell className="w-5 h-5" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+            </button>
+          </div>
+        </header>
+
+        {/* ÁREA ROLÁVEL DO DASHBOARD */}
+        <div className="flex-1 overflow-y-auto p-6 scroll-smooth">
+          <div className="max-w-7xl mx-auto space-y-6">
+            
+            {/* CARDS DE ESTATÍSTICAS */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {estatisticas.map((stat, index) => (
+                <div key={index} className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={`p-3 rounded-xl ${stat.bg}`}>
+                      <stat.icone className={`w-6 h-6 ${stat.cor}`} />
+                    </div>
+                  </div>
+                  <h3 className="text-3xl font-bold text-gray-900">{stat.valor}</h3>
+                  <p className="text-sm font-medium text-gray-600 mt-1">{stat.titulo}</p>
+                  <p className="text-xs text-gray-400 mt-1">{stat.subtitulo}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* SEÇÃO PRINCIPAL (2 COLUNAS) */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              
+              {/* COLUNA ESQUERDA: CRONOGRAMA DE HOJE */}
+              <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col">
+                <div className="p-6 border-b border-gray-50 flex items-center justify-between">
+                  <div>
+                    <h2 className="text-lg font-bold text-gray-900">Cronograma de Hoje</h2>
+                    <p className="text-sm text-gray-500">Você tem 4 atividades programadas para hoje.</p>
+                  </div>
+                  <button className="text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors flex items-center">
+                    Ver semana <ChevronRight className="w-4 h-4 ml-1" />
+                  </button>
+                </div>
+                
+                <div className="p-6 flex-1">
+                  <div className="relative border-l-2 border-gray-100 ml-4 space-y-8">
+                    {cronogramaHoje.map((item) => (
+                      <div key={item.id} className="relative pl-6">
+                        {/* Indicador de Status na Linha do Tempo */}
+                        <div className={`absolute -left-[9px] top-1 w-4 h-4 rounded-full border-2 border-white ${
+                          item.status === 'concluido' ? 'bg-green-500' :
+                          item.status === 'em_andamento' ? 'bg-indigo-500 ring-4 ring-indigo-100' :
+                          'bg-gray-300'
+                        }`} />
+                        
+                        <div className={`p-4 rounded-xl border ${
+                          item.status === 'em_andamento' ? 'border-indigo-200 bg-indigo-50 shadow-sm' : 
+                          'border-gray-100 bg-white hover:border-gray-200 hover:bg-gray-50'
+                        } transition-colors`}>
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                            <span className="text-xs font-semibold text-gray-500 flex items-center gap-1">
+                              <Clock className="w-3 h-3" /> {item.horario}
+                            </span>
+                            <span className={`text-xs px-2 py-1 rounded-full font-medium w-fit ${
+                              item.tipo === 'Teoria' ? 'bg-blue-100 text-blue-700' :
+                              item.tipo === 'Exercícios' ? 'bg-orange-100 text-orange-700' :
+                              item.tipo === 'Prática' ? 'bg-purple-100 text-purple-700' :
+                              'bg-gray-100 text-gray-700'
+                            }`}>
+                              {item.tipo}
+                            </span>
+                          </div>
+                          <h4 className="text-md font-bold text-gray-900">{item.materia}</h4>
+                          <p className="text-sm text-gray-600">{item.topico}</p>
+                          
+                          {item.status === 'em_andamento' && (
+                            <div className="mt-4 flex gap-2">
+                              <button className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
+                                Continuar Estudando
+                              </button>
+                              <button className="px-4 py-2 bg-white text-gray-700 border border-gray-200 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                                Marcar Concluído
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* COLUNA DIREITA: PROGRESSO E PROVAS */}
+              <div className="space-y-6">
+                
+                {/* PROGRESSO POR MATÉRIA */}
+                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-lg font-bold text-gray-900">Progresso do Edital</h2>
+                  </div>
+                  <div className="space-y-5">
+                    {progressoMaterias.map((materia, idx) => (
+                      <div key={idx}>
+                        <div className="flex justify-between mb-1">
+                          <span className="text-sm font-medium text-gray-700">{materia.nome}</span>
+                          <span className="text-sm font-medium text-gray-500">{materia.progresso}%</span>
+                        </div>
+                        <div className="w-full bg-gray-100 rounded-full h-2">
+                          <div 
+                            className={`${materia.cor} h-2 rounded-full transition-all duration-1000 ease-out`} 
+                            style={{ width: `${materia.progresso}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <button className="w-full mt-6 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors">
+                    Ver relatório completo
+                  </button>
+                </div>
+
+                {/* PRÓXIMAS PROVAS */}
+                <div className="bg-gradient-to-br from-indigo-900 to-purple-900 p-6 rounded-2xl shadow-sm text-white relative overflow-hidden">
+                  {/* Elemento decorativo */}
+                  <div className="absolute -right-6 -top-6 w-32 h-32 bg-white opacity-5 rounded-full blur-2xl"></div>
+                  
+                  <div className="flex items-center gap-2 mb-6">
+                    <Target className="w-5 h-5 text-indigo-300" />
+                    <h2 className="text-lg font-bold">Próximos Desafios</h2>
+                  </div>
+                  
+                  <div className="space-y-4 relative z-10">
+                    {proximasProvas.map((prova) => (
+                      <div key={prova.id} className="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/10">
+                        <h4 className="font-semibold text-sm mb-1">{prova.nome}</h4>
+                        <div className="flex items-center justify-between text-xs text-indigo-200">
+                          <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {prova.data}</span>
+                          <span className="bg-indigo-800 px-2 py-1 rounded-md font-medium text-white">
+                            Faltam {prova.diasRestantes} dias
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+// Componente Auxiliar para o Item de Navegação do Sidebar
+function NavItem({ icone: Icon, texto, ativo }) {
+  return (
+    <a 
+      href="#" 
+      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-colors ${
+        ativo 
+          ? 'bg-indigo-50 text-indigo-700' 
+          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+      }`}
+    >
+      <Icon className={`w-5 h-5 ${ativo ? 'text-indigo-600' : 'text-gray-400'}`} />
+      {texto}
+    </a>
+  );
+}
